@@ -3,7 +3,7 @@
 
 name: Build Step
 env:
-  CONFIG_REPO_NAME: argocd-webapp-config
+  CONFIG_REPO_NAME: gitops-infra
 on:
   push:
     branches: ['main']
