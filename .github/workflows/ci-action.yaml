@@ -74,7 +74,7 @@ jobs:
             aadilraza339/gitops01:${{ github.sha }} 
             ghcr.io/aadilraza339/gitops01:${{ github.sha }}
           # build on feature branches, push only on main branch
-          push: ${{ github.ref == 'refs/heads/master' }}
+          push: ${{ github.ref == 'refs/heads/main' }}
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
@@ -86,7 +86,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           repository: aadilraza339/gitops-infra
-          ref: 'master'
+          ref: 'main'
           token: ${{ secrets.G_TOKEN }}
       - name: setup git config
         run: |
@@ -97,4 +97,4 @@ jobs:
           git add -A
           git commit -am "Update image for - ${{ github.sha }}"
       - run: echo ${{ github }}
-      - run: git push origin master
+      - run: git push origin main
