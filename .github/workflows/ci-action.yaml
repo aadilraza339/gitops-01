@@ -2,7 +2,8 @@
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
 name: Build Step
-
+env:
+  CONFIG_REPO_NAME: argocd-webapp-config
 on:
   push:
     branches: ['main']
@@ -90,11 +91,16 @@ jobs:
           token: ${{ secrets.G_TOKEN }}
       - name: setup git config
         run: |
-          git config --global user.email "aadil18@navgurukul.org"
-          git config --global user.name "aadilraza339"
-          echo ${{ github.sha }}
-          sed -i "s#${{ github.actor }}.*#${{ github.actor }}/gitops01:${{ github.sha }}#g" deployment.yaml
-          git add -A
-          git commit -am "Update image for - ${{ github.sha }}"
-      - run: echo ${{ github }}
-      - run: git push origin main
+          echo "promoting into dev environment!"
+          git config --global user.email ci-bot@argocd.com && git config --global user.name ci-bot
+          echo "cloning config repo $CONFIG_REPO_NAME"
+          git clone https://oauth2:${{ secrets.G_TOKEN }}@github.com/${{ github.repository_owner }}/$CONFIG_REPO_NAME.git
+          cd $CONFIG_REPO_NAME
+          echo "checkout main branch"
+          git checkout main
+          echo "updating image tag in values file"
+          sed -i "s,tag:.*,tag:\ ${{ github.sha }}," deployment.yaml
+          git add . && git commit -m "update image tag"
+          git push
+
+     
